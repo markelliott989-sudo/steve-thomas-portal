@@ -24,6 +24,9 @@
         .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .avatar-option { cursor: pointer; border: 3px solid transparent; transition: all 0.2s; }
+        .avatar-option:hover { transform: scale(1.1); }
+        .avatar-option.selected { border-color: #f59e0b; background-color: #fef3c7; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -120,8 +123,17 @@
                         <input type="date" id="set-bday" class="w-full px-4 py-2 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-slate-200 outline-none">
                     </div>
                 </div>
+
+                <!-- Avatar Selection Grid -->
                 <div class="space-y-2">
-                    <label class="text-xs font-semibold text-slate-500 ml-1">Profile Picture URL</label>
+                    <label class="text-xs font-semibold text-slate-500 ml-1">Choose Portal Avatar</label>
+                    <div class="grid grid-cols-4 sm:grid-cols-6 gap-3 p-2 bg-white/40 rounded-2xl border border-white/60" id="avatar-grid">
+                        <!-- Avatars will be injected here -->
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-slate-500 ml-1">Or Paste Profile Picture URL</label>
                     <input type="text" id="set-pic" placeholder="Paste image URL here" class="w-full px-4 py-2 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-slate-200 outline-none">
                 </div>
             </div>
@@ -140,6 +152,9 @@
     </div>
 
     <script>
+        const avatarSeeds = ['Felix', 'Aneka', 'Max', 'Lilly', 'Jasper', 'Mimi', 'Oliver', 'Toby', 'Milo', 'Bella', 'Daisy', 'Lucy'];
+        let selectedAvatarUrl = "";
+
         let state = JSON.parse(localStorage.getItem('portal_state')) || {
             name: "Steve Thomas",
             password: "godisgreat",
@@ -147,15 +162,34 @@
             profilePic: ""
         };
 
+        function initAvatars() {
+            const grid = document.getElementById('avatar-grid');
+            grid.innerHTML = "";
+            avatarSeeds.forEach(seed => {
+                const url = 'https://api.dicebear.com/9.x/adventurer/svg?seed=' + seed;
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = 'w-full h-auto rounded-xl avatar-option';
+                if (state.profilePic === url) img.classList.add('selected');
+                img.onclick = () => {
+                    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                    img.classList.add('selected');
+                    selectedAvatarUrl = url;
+                    document.getElementById('set-pic').value = ""; // Clear manual URL if avatar selected
+                };
+                grid.appendChild(img);
+            });
+        }
+
         function showView(viewId) {
-            document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll("[id^='view-']").forEach(v => v.classList.add('hidden'));
             document.getElementById(viewId).classList.remove('hidden');
             if(viewId === 'view-settings') {
                 document.getElementById('set-name').value = state.name;
                 document.getElementById('set-bday').value = state.birthday;
-                document.getElementById('set-pic').value = state.profilePic;
-                document.getElementById('set-new-pass').value = '';
-                document.getElementById('set-confirm-pass').value = '';
+                document.getElementById('set-pic').value = state.profilePic.startsWith('https://api.dicebear.com') ? "" : state.profilePic;
+                selectedAvatarUrl = state.profilePic;
+                initAvatars();
             }
         }
 
@@ -173,7 +207,7 @@
         function saveSettings() {
             const newName = document.getElementById('set-name').value;
             const newBday = document.getElementById('set-bday').value;
-            const newPic = document.getElementById('set-pic').value;
+            const manualPic = document.getElementById('set-pic').value;
             const p1 = document.getElementById('set-new-pass').value;
             const p2 = document.getElementById('set-confirm-pass').value;
 
@@ -188,7 +222,7 @@
 
             state.name = newName || state.name;
             state.birthday = newBday;
-            state.profilePic = newPic;
+            state.profilePic = manualPic || selectedAvatarUrl;
             
             saveToLocal();
             updateDashboard();
