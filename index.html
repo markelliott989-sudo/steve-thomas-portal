@@ -58,7 +58,25 @@
         </form>
     </div>
 
-    <!-- Step 2: Main Dashboard -->
+    <!-- Step 2: Code of Conduct -->
+    <div id="view-coc" class="max-w-md w-full glass rounded-3xl p-10 shadow-2xl text-center space-y-8 border-t-4 border-slate-800 hidden fade-in">
+        <div class="space-y-4">
+            <h1 class="text-2xl font-bold text-slate-800 serif uppercase tracking-widest">Code of Conduct</h1>
+            <div class="text-left text-sm text-slate-600 space-y-4 bg-white/50 p-6 rounded-2xl border border-white/60">
+                <p class="font-medium text-slate-800">To maintain the sanctity of the Spiritual Network, all users must agree to the following:</p>
+                <ul class="list-disc ml-5 space-y-2">
+                    <li>Act with kindness, grace, and compassion in all interactions.</li>
+                    <li>Respect the spiritual journey and beliefs of every member.</li>
+                    <li>Uphold the peace and harmony of this digital sanctuary.</li>
+                    <li>Follow all community guidelines and spiritual network rules.</li>
+                </ul>
+                <p class="pt-2 text-xs text-red-500 font-bold border-t border-red-100">Warning: Failure to adhere to these rules will result in immediate enforcement actions, including permanent account termination.</p>
+            </div>
+            <button onclick="acceptCoC()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform active:scale-[0.98]">I Agree and Enter</button>
+        </div>
+    </div>
+
+    <!-- Step 3: Main Dashboard -->
     <div id="view-dashboard" class="max-w-2xl w-full glass rounded-3xl p-10 shadow-2xl space-y-8 border-t-4 border-emerald-400 hidden fade-in">
         <div class="flex justify-between items-start">
             <div class="space-y-2">
@@ -97,7 +115,7 @@
         </div>
     </div>
 
-    <!-- Step 3: Settings -->
+    <!-- Step 4: Settings -->
     <div id="view-settings" class="max-w-xl w-full glass rounded-3xl p-10 shadow-2xl space-y-8 border-t-4 border-slate-800 hidden fade-in">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
@@ -159,7 +177,8 @@
             name: "Steve Thomas",
             password: "godisgreat",
             birthday: "",
-            profilePic: ""
+            profilePic: "",
+            cocAccepted: false
         };
 
         function initAvatars() {
@@ -197,11 +216,22 @@
             e.preventDefault();
             const pass = document.getElementById('login-password').value;
             if (pass === state.password) {
-                updateDashboard();
-                showView('view-dashboard');
+                if (!state.cocAccepted) {
+                    showView('view-coc');
+                } else {
+                    updateDashboard();
+                    showView('view-dashboard');
+                }
             } else {
                 document.getElementById('login-error').classList.remove('hidden');
             }
+        }
+
+        function acceptCoC() {
+            state.cocAccepted = true;
+            saveToLocal();
+            updateDashboard();
+            showView('view-dashboard');
         }
 
         function saveSettings() {
