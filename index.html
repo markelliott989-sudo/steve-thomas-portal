@@ -177,8 +177,7 @@
             name: "Steve Thomas",
             password: "godisgreat",
             birthday: "",
-            profilePic: "",
-            cocAccepted: false
+            profilePic: ""
         };
 
         function initAvatars() {
@@ -216,20 +215,14 @@
             e.preventDefault();
             const pass = document.getElementById('login-password').value;
             if (pass === state.password) {
-                if (!state.cocAccepted) {
-                    showView('view-coc');
-                } else {
-                    updateDashboard();
-                    showView('view-dashboard');
-                }
+                // Always show CoC after login, regardless of previous sessions
+                showView('view-coc');
             } else {
                 document.getElementById('login-error').classList.remove('hidden');
             }
         }
 
         function acceptCoC() {
-            state.cocAccepted = true;
-            saveToLocal();
             updateDashboard();
             showView('view-dashboard');
         }
