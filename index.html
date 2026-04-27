@@ -55,24 +55,7 @@
         </form>
     </div>
 
-    <!-- Step 2: Forced Password Change -->
-    <div id="view-force-change" class="max-w-md w-full glass rounded-3xl p-10 shadow-2xl text-center space-y-8 border-t-4 border-blue-400 hidden fade-in">
-        <div class="space-y-2">
-            <h1 class="text-3xl font-bold text-slate-800 serif">New Beginnings</h1>
-            <p class="text-slate-500 font-light italic text-sm">"Behold, I make all things new."</p>
-            <p class="text-slate-600 text-sm mt-4">For your security, please choose a personal password to continue.</p>
-        </div>
-        <form onsubmit="handleForceChange(event)" class="space-y-6 text-left">
-            <div class="space-y-4">
-                <input type="password" id="force-new-pass" required placeholder="New Password" class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-blue-200 outline-none">
-                <input type="password" id="force-confirm-pass" required placeholder="Confirm Password" class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-blue-200 outline-none">
-                <p id="force-error" class="text-red-500 text-xs mt-1 hidden font-medium text-center">Passwords do not match.</p>
-            </div>
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg">Set Password</button>
-        </form>
-    </div>
-
-    <!-- Step 3: Main Dashboard -->
+    <!-- Step 2: Main Dashboard -->
     <div id="view-dashboard" class="max-w-2xl w-full glass rounded-3xl p-10 shadow-2xl space-y-8 border-t-4 border-emerald-400 hidden fade-in">
         <div class="flex justify-between items-start">
             <div class="space-y-2">
@@ -111,7 +94,7 @@
         </div>
     </div>
 
-    <!-- Step 4: Settings -->
+    <!-- Step 3: Settings -->
     <div id="view-settings" class="max-w-xl w-full glass rounded-3xl p-10 shadow-2xl space-y-8 border-t-4 border-slate-800 hidden fade-in">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
@@ -180,28 +163,10 @@
             e.preventDefault();
             const pass = document.getElementById('login-password').value;
             if (pass === state.password) {
-                if (state.password === 'godisgreat') {
-                    showView('view-force-change');
-                } else {
-                    updateDashboard();
-                    showView('view-dashboard');
-                }
-            } else {
-                document.getElementById('login-error').classList.remove('hidden');
-            }
-        }
-
-        function handleForceChange(e) {
-            e.preventDefault();
-            const p1 = document.getElementById('force-new-pass').value;
-            const p2 = document.getElementById('force-confirm-pass').value;
-            if (p1 === p2) {
-                state.password = p1;
-                saveToLocal();
                 updateDashboard();
                 showView('view-dashboard');
             } else {
-                document.getElementById('force-error').classList.remove('hidden');
+                document.getElementById('login-error').classList.remove('hidden');
             }
         }
 
@@ -260,10 +225,6 @@
             localStorage.setItem('portal_state', JSON.stringify(state));
         }
 
-        // Auto-login if password already changed
-        if (state.password !== 'godisgreat') {
-            // Wait for user to enter password anyway for security simulation
-        }
         updateDashboard();
     </script>
 </body>
